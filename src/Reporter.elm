@@ -41,7 +41,7 @@ formatReport errors =
 
     else
         [ formatReports errors
-        , [ Text.from <| "\n\n\n\n" ++ String.fromInt numberOfErrors ++ " problem(s)." ]
+        , [ Text.from "\n" ]
         ]
             |> List.concat
             |> List.map Text.toRecord
