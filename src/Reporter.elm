@@ -15,7 +15,7 @@ type alias Error =
 
 
 type alias File =
-    { name : String
+    { path : String
     , source : String
     }
 
@@ -60,7 +60,7 @@ formatReportForFileWithExtract ( file, errors ) =
 
         header : Text
         header =
-            (prefix ++ String.padLeft (80 - String.length prefix) '-' (" " ++ file.name))
+            (prefix ++ String.padLeft (80 - String.length prefix) '-' (" " ++ file.path))
                 |> Text.from
                 |> Text.inBlue
     in
@@ -238,10 +238,10 @@ fileSeparator file1 file2 =
         str : String
         str =
             "\n\n"
-                ++ String.padLeft 80 ' ' (file1.name ++ "  ↑    ")
+                ++ String.padLeft 80 ' ' (file1.path ++ "  ↑    ")
                 ++ "\n====o======================================================================o===="
                 ++ "\n    ↓  "
-                ++ file2.name
+                ++ file2.path
                 ++ "\n\n\n"
     in
     Text.from str
