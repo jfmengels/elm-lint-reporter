@@ -3,7 +3,7 @@ module Text exposing
     , from
     , inBlue, inRed
     , join
-    , toRecords
+    , toRecord
     )
 
 {-| Represents text with some styling applied to it.
@@ -39,7 +39,7 @@ module Text exposing
 
 # Access
 
-@docs toRecords
+@docs toRecord
 
 -}
 
@@ -97,9 +97,9 @@ join sep chunks =
 -- ACCESS
 
 
-{-| Transform a list of texts into a list of records that can then be
-transformed for display in different mediums.
+{-| Transform a text into a record that can then be transformed for display in
+different mediums.
 -}
-toRecords : List Text -> List { str : String, color : Maybe ( Int, Int, Int ) }
-toRecords items =
-    List.map (\(Text text) -> text) items
+toRecord : Text -> { str : String, color : Maybe ( Int, Int, Int ) }
+toRecord (Text text) =
+    text
