@@ -7,7 +7,8 @@ import Text exposing (Text)
 {-| Error
 -}
 type alias Error =
-    { ruleName : String
+    { moduleName : Maybe String
+    , ruleName : String
     , message : String
     , details : List String
     , range : Range
@@ -40,7 +41,9 @@ formatReport errors =
             |> List.singleton
 
     else
-        [ formatReports errors
+        [ errors
+            |> List.filter (Tuple.second >> List.isEmpty >> not)
+            |> formatReports
         , [ Text.from "\n" ]
         ]
             |> List.concat
@@ -60,7 +63,7 @@ formatReportForFileWithExtract ( file, errors ) =
 
         header : Text
         header =
-            (prefix ++ String.padLeft (80 - String.length prefix) '-' (" " ++ file.path))
+            (prefix ++ String.padLeft (80 - String.length prefix) '-' (" " ++ fileIdentifier ( file, errors )))
                 |> Text.from
                 |> Text.inBlue
     in
@@ -224,25 +227,35 @@ formatReports errors =
         [ error ] ->
             formatReportForFileWithExtract error
 
-        (( fileA, error ) as a) :: (( fileB, _ ) as b) :: restOfErrors ->
+        a :: b :: restOfErrors ->
             List.concat
                 [ formatReportForFileWithExtract a
-                , [ fileSeparator fileA fileB ]
+                , [ fileSeparator a b ]
                 , formatReports (b :: restOfErrors)
                 ]
 
 
-fileSeparator : File -> File -> Text
-fileSeparator file1 file2 =
+fileSeparator : ( File, List Error ) -> ( File, List Error ) -> Text
+fileSeparator a b =
     let
         str : String
         str =
             "\n\n"
-                ++ String.padLeft 80 ' ' (file1.path ++ "  ↑    ")
+                ++ String.padLeft 80 ' ' (fileIdentifier a ++ "  ↑    ")
                 ++ "\n====o======================================================================o===="
                 ++ "\n    ↓  "
-                ++ file2.path
+                ++ fileIdentifier b
                 ++ "\n\n\n"
     in
     Text.from str
         |> Text.inRed
+
+
+fileIdentifier : ( File, List Error ) -> String
+fileIdentifier ( file, errors ) =
+    case List.head errors |> Maybe.andThen .moduleName of
+        Just moduleName ->
+            moduleName
+
+        Nothing ->
+            file.path
