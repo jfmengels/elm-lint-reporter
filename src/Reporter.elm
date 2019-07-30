@@ -28,6 +28,11 @@ type alias Range =
 
 formatReport : List ( File, List Error ) -> List { str : String, color : Maybe ( Int, Int, Int ) }
 formatReport errors =
+    let
+        numberOfErrors : Int
+        numberOfErrors =
+            totalNumberOfErrors errors
+    in
     if List.isEmpty errors then
         "I found no linting errors.\nYou're all good!"
             |> Text.from
@@ -36,7 +41,7 @@ formatReport errors =
 
     else
         [ formatReports errors
-        , [ Text.from <| "\n\n\n\n" ++ summary errors ]
+        , [ Text.from <| "\n\n\n\n" ++ String.fromInt numberOfErrors ++ " problem(s)." ]
         ]
             |> List.concat
             |> List.map Text.toRecord
@@ -203,16 +208,11 @@ offsetBecauseOfLineNumber lineNumber =
         |> (+) 2
 
 
-summary : List ( File, List Error ) -> String
-summary errors =
-    let
-        errorCount : Int
-        errorCount =
-            errors
-                |> List.concatMap Tuple.second
-                |> List.length
-    in
-    String.fromInt errorCount ++ " problem(s)."
+totalNumberOfErrors : List ( File, List Error ) -> Int
+totalNumberOfErrors errors =
+    errors
+        |> List.concatMap Tuple.second
+        |> List.length
 
 
 formatReports : List ( File, List Error ) -> List Text
