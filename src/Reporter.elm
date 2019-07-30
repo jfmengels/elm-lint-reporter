@@ -26,16 +26,20 @@ type alias Range =
     }
 
 
-formatReport : List ( File, List Error ) -> List Text
+formatReport : List ( File, List Error ) -> List { str : String, color : Maybe ( Int, Int, Int ) }
 formatReport errors =
     if List.isEmpty errors then
-        [ Text.from "I found no linting errors.\nYou're all good!" ]
+        "I found no linting errors.\nYou're all good!"
+            |> Text.from
+            |> Text.toRecord
+            |> List.singleton
 
     else
-        List.concat
-            [ formatReports errors
-            , [ Text.from <| "\n\n\n\n" ++ summary errors ]
-            ]
+        [ formatReports errors
+        , [ Text.from <| "\n\n\n\n" ++ summary errors ]
+        ]
+            |> List.concat
+            |> List.map Text.toRecord
 
 
 formatReportForFileWithExtract : ( File, List Error ) -> List Text
