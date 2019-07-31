@@ -34,7 +34,7 @@ formatReport errors =
         numberOfErrors =
             totalNumberOfErrors errors
     in
-    if List.isEmpty errors then
+    if numberOfErrors == 0 then
         "I found no linting errors.\nYou're all good!"
             |> Text.from
             |> Text.toRecord
