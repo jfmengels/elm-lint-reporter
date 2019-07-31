@@ -1,0 +1,27 @@
+{
+  "name": "elm-lint-reporter",
+  "version": "1.0.0",
+  "description": "Reporter for elm-init",
+  "main": "index.js",
+  "scripts": {
+    "test": "elm make && elm-format src/ --validate && elm-test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jfmengels/elm-lint-reporter.git"
+  },
+  "keywords": [
+    "elm-lint"
+  ],
+  "author": "Jeroen Engels",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/jfmengels/elm-lint-reporter/issues"
+  },
+  "homepage": "https://github.com/jfmengels/elm-lint-reporter#readme",
+  "devDependencies": {
+    "elm": "^0.19.0-no-deps",
+    "elm-format": "^0.8.1",
+    "elm-test": "^0.19.0-rev6"
+  }
+}
