@@ -1,8 +1,7 @@
 module ReporterTest exposing (suite)
 
-import Expect exposing (Expectation)
-import Fuzz exposing (Fuzzer, int, list, string)
-import Reporter exposing (Error, File)
+import Expect
+import Reporter
 import Test exposing (Test, describe, test)
 
 
