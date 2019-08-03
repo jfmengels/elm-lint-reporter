@@ -36,7 +36,7 @@ formatReport isFixing errors =
             totalNumberOfErrors errors
     in
     if numberOfErrors == 0 then
-        "I found no linting errors.\nYou're all good!"
+        "I found no linting errors.\nYou're all good!\n"
             |> Text.from
             |> Text.toRecord
             |> List.singleton

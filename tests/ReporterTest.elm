@@ -70,8 +70,8 @@ a = Debug.log "debug" 1"""
             ]
                 |> Reporter.formatReport False
                 |> expect
-                    { withoutColors = "I found no linting errors.\nYou're all good!"
-                    , withColors = "I found no linting errors.\nYou're all good!"
+                    { withoutColors = "I found no linting errors.\nYou're all good!\n"
+                    , withColors = "I found no linting errors.\nYou're all good!\n"
                     }
         )
 
