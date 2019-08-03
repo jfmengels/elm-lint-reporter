@@ -28,8 +28,8 @@ type alias Range =
     }
 
 
-formatReport : List ( File, List Error ) -> List { str : String, color : Maybe ( Int, Int, Int ) }
-formatReport errors =
+formatReport : Bool -> List ( File, List Error ) -> List { str : String, color : Maybe ( Int, Int, Int ) }
+formatReport isFixing errors =
     let
         numberOfErrors : Int
         numberOfErrors =
@@ -44,19 +44,19 @@ formatReport errors =
     else
         [ errors
             |> List.filter (Tuple.second >> List.isEmpty >> not)
-            |> formatReports
+            |> formatReports isFixing
         , [ Text.from "\n" ]
         ]
             |> List.concat
             |> List.map Text.toRecord
 
 
-formatReportForFileWithExtract : ( File, List Error ) -> List Text
-formatReportForFileWithExtract ( file, errors ) =
+formatReportForFileWithExtract : Bool -> ( File, List Error ) -> List Text
+formatReportForFileWithExtract isFixing ( file, errors ) =
     let
         formattedErrors : List (List Text)
         formattedErrors =
-            List.map (formatErrorWithExtract file) errors
+            List.map (formatErrorWithExtract isFixing file) errors
 
         prefix : String
         prefix =
@@ -71,8 +71,8 @@ formatReportForFileWithExtract ( file, errors ) =
     header :: Text.from "\n\n" :: Text.join "\n\n\n" formattedErrors
 
 
-formatErrorWithExtract : File -> Error -> List Text
-formatErrorWithExtract file { ruleName, message, details, range, fixedSource } =
+formatErrorWithExtract : Bool -> File -> Error -> List Text
+formatErrorWithExtract isFixing file { ruleName, message, details, range, fixedSource } =
     let
         title : List Text
         title =
@@ -93,8 +93,8 @@ formatErrorWithExtract file { ruleName, message, details, range, fixedSource } =
     [ title
     , codeExtract_
     , details_
-    , case fixedSource of
-        Just fixedSource_ ->
+    , case ( isFixing, fixedSource ) of
+        ( False, Just fixedSource_ ) ->
             [ Text.from "I think I know how to fix this problem. If you run "
             , "elm-lint" |> Text.from |> Text.inBlue
             , Text.from " with the "
@@ -102,7 +102,7 @@ formatErrorWithExtract file { ruleName, message, details, range, fixedSource } =
             , Text.from "\noption, I can suggest you a solution and you can validate it."
             ]
 
-        Nothing ->
+        _ ->
             []
     ]
         |> List.filter (List.isEmpty >> not)
@@ -231,20 +231,20 @@ totalNumberOfErrors errors =
         |> List.length
 
 
-formatReports : List ( File, List Error ) -> List Text
-formatReports errors =
+formatReports : Bool -> List ( File, List Error ) -> List Text
+formatReports isFixing errors =
     case errors of
         [] ->
             []
 
         [ error ] ->
-            formatReportForFileWithExtract error
+            formatReportForFileWithExtract isFixing error
 
         a :: b :: restOfErrors ->
             List.concat
-                [ formatReportForFileWithExtract a
+                [ formatReportForFileWithExtract isFixing a
                 , fileSeparator a b
-                , formatReports (b :: restOfErrors)
+                , formatReports isFixing (b :: restOfErrors)
                 ]
 
 

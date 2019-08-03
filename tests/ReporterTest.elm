@@ -1,7 +1,7 @@
 module ReporterTest exposing (suite)
 
 import Expect exposing (Expectation)
-import Reporter
+import Reporter exposing (Error, File)
 import Test exposing (Test, describe, test)
 
 
@@ -68,7 +68,7 @@ a = Debug.log "debug" 1"""
               , []
               )
             ]
-                |> Reporter.formatReport
+                |> Reporter.formatReport False
                 |> expect
                     { withoutColors = "I found no linting errors.\nYou're all good!"
                     , withColors = "I found no linting errors.\nYou're all good!"
@@ -106,7 +106,7 @@ a = Debug.log "debug" 1"""
               , []
               )
             ]
-                |> Reporter.formatReport
+                |> Reporter.formatReport False
                 |> expect
                     { withoutColors = """-- ELM-LINT ERROR -------------------------------------------------------- FileA
 
@@ -184,7 +184,7 @@ a = Debug.log "debug" 1"""
                   , []
                   )
                 ]
-                    |> Reporter.formatReport
+                    |> Reporter.formatReport False
                     |> expect
                         { withoutColors = """-- ELM-LINT ERROR -------------------------------------------------------- FileA
 
@@ -300,7 +300,7 @@ a = Debug.log "debug" 1"""
                     ]
                   )
                 ]
-                    |> Reporter.formatReport
+                    |> Reporter.formatReport False
                     |> expect
                         { withoutColors = """-- ELM-LINT ERROR -------------------------------------------------------- FileA
 
@@ -407,32 +407,33 @@ Donec sed ligula ac mi pretium mattis et in nisi. Nulla nec ex hendrerit, sollic
 
 fixAvailableTest : Test
 fixAvailableTest =
-    test "should mention a fix is available when error provides one"
-        (\() ->
-            [ ( { path = "src/FileA.elm"
-                , source = """module FileA exposing (a)
+    describe "Fixing mention"
+        [ test "should mention a fix is available when the error provides one"
+            (\() ->
+                [ ( { path = "src/FileA.elm"
+                    , source = """module FileA exposing (a)
 a = Debug.log "debug" 1"""
-                }
-              , [ { moduleName = Just "FileA"
-                  , ruleName = "NoDebug"
-                  , message = "Do not use Debug"
-                  , details =
-                        [ "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum cursus erat ullamcorper, commodo leo quis, sollicitudin eros. Sed semper mattis ex, vitae dignissim lectus. Integer eu risus augue. Nam egestas lacus non lacus molestie mattis. Phasellus magna dui, ultrices eu massa nec, interdum tincidunt eros. Aenean rutrum a purus nec cursus. Integer ullamcorper leo non lectus dictum, in vulputate justo vulputate. Donec ullamcorper finibus quam sed dictum."
-                        , "Donec sed ligula ac mi pretium mattis et in nisi. Nulla nec ex hendrerit, sollicitudin eros at, mattis tortor. Ut lacinia ornare lectus in vestibulum. Nam congue ultricies dolor, in venenatis nulla sagittis nec. In ac leo sit amet diam iaculis ornare eu non odio. Proin sed orci et urna tincidunt tincidunt quis a lacus. Donec euismod odio nulla, sit amet iaculis lorem interdum sollicitudin. Vivamus bibendum quam urna, in tristique lacus iaculis id. In tempor lectus ipsum, vehicula bibendum magna pretium vitae. Cras ullamcorper rutrum nunc non sollicitudin. Curabitur tempus eleifend nunc, sed ornare nisl tincidunt vel. Maecenas eu nisl ligula."
-                        ]
-                  , range =
-                        { start = { row = 2, column = 5 }
-                        , end = { row = 2, column = 10 }
-                        }
-                  , fixedSource = Just <| always """module FileA exposing (a)
+                    }
+                  , [ { moduleName = Just "FileA"
+                      , ruleName = "NoDebug"
+                      , message = "Do not use Debug"
+                      , details =
+                            [ "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum cursus erat ullamcorper, commodo leo quis, sollicitudin eros. Sed semper mattis ex, vitae dignissim lectus. Integer eu risus augue. Nam egestas lacus non lacus molestie mattis. Phasellus magna dui, ultrices eu massa nec, interdum tincidunt eros. Aenean rutrum a purus nec cursus. Integer ullamcorper leo non lectus dictum, in vulputate justo vulputate. Donec ullamcorper finibus quam sed dictum."
+                            , "Donec sed ligula ac mi pretium mattis et in nisi. Nulla nec ex hendrerit, sollicitudin eros at, mattis tortor. Ut lacinia ornare lectus in vestibulum. Nam congue ultricies dolor, in venenatis nulla sagittis nec. In ac leo sit amet diam iaculis ornare eu non odio. Proin sed orci et urna tincidunt tincidunt quis a lacus. Donec euismod odio nulla, sit amet iaculis lorem interdum sollicitudin. Vivamus bibendum quam urna, in tristique lacus iaculis id. In tempor lectus ipsum, vehicula bibendum magna pretium vitae. Cras ullamcorper rutrum nunc non sollicitudin. Curabitur tempus eleifend nunc, sed ornare nisl tincidunt vel. Maecenas eu nisl ligula."
+                            ]
+                      , range =
+                            { start = { row = 2, column = 5 }
+                            , end = { row = 2, column = 10 }
+                            }
+                      , fixedSource = Just <| always """module FileA exposing (a)
   a = 1"""
-                  }
+                      }
+                    ]
+                  )
                 ]
-              )
-            ]
-                |> Reporter.formatReport
-                |> expect
-                    { withoutColors = """-- ELM-LINT ERROR -------------------------------------------------------- FileA
+                    |> Reporter.formatReport False
+                    |> expect
+                        { withoutColors = """-- ELM-LINT ERROR -------------------------------------------------------- FileA
 
 NoDebug: Do not use Debug
 
@@ -448,7 +449,7 @@ Donec sed ligula ac mi pretium mattis et in nisi. Nulla nec ex hendrerit, sollic
 I think I know how to fix this problem. If you run elm-lint with the --fix
 option, I can suggest you a solution and you can validate it.
 """
-                    , withColors = """[-- ELM-LINT ERROR -------------------------------------------------------- FileA](51-51-51)
+                        , withColors = """[-- ELM-LINT ERROR -------------------------------------------------------- FileA](51-51-51)
 
 [NoDebug](255-255-255): Do not use Debug
 
@@ -464,5 +465,36 @@ Donec sed ligula ac mi pretium mattis et in nisi. Nulla nec ex hendrerit, sollic
 I think I know how to fix this problem. If you run [elm-lint](51-51-51) with the [--fix](51-51-51)
 option, I can suggest you a solution and you can validate it.
 """
-                    }
-        )
+                        }
+            )
+        , test "should not mention a fix is available if the process is currently fixing errors (just like if no fix was available)"
+            (\() ->
+                let
+                    file : File
+                    file =
+                        { path = "src/FileA.elm"
+                        , source = """module FileA exposing (a)
+      a = Debug.log "debug" 1"""
+                        }
+
+                    error : Error
+                    error =
+                        { moduleName = Just "FileA"
+                        , ruleName = "NoDebug"
+                        , message = "Do not use Debug"
+                        , details =
+                            [ "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum cursus erat ullamcorper, commodo leo quis, sollicitudin eros. Sed semper mattis ex, vitae dignissim lectus. Integer eu risus augue. Nam egestas lacus non lacus molestie mattis. Phasellus magna dui, ultrices eu massa nec, interdum tincidunt eros. Aenean rutrum a purus nec cursus. Integer ullamcorper leo non lectus dictum, in vulputate justo vulputate. Donec ullamcorper finibus quam sed dictum."
+                            , "Donec sed ligula ac mi pretium mattis et in nisi. Nulla nec ex hendrerit, sollicitudin eros at, mattis tortor. Ut lacinia ornare lectus in vestibulum. Nam congue ultricies dolor, in venenatis nulla sagittis nec. In ac leo sit amet diam iaculis ornare eu non odio. Proin sed orci et urna tincidunt tincidunt quis a lacus. Donec euismod odio nulla, sit amet iaculis lorem interdum sollicitudin. Vivamus bibendum quam urna, in tristique lacus iaculis id. In tempor lectus ipsum, vehicula bibendum magna pretium vitae. Cras ullamcorper rutrum nunc non sollicitudin. Curabitur tempus eleifend nunc, sed ornare nisl tincidunt vel. Maecenas eu nisl ligula."
+                            ]
+                        , range =
+                            { start = { row = 2, column = 5 }
+                            , end = { row = 2, column = 10 }
+                            }
+                        , fixedSource = Just <| always """module FileA exposing (a)
+      a = 1"""
+                        }
+                in
+                Reporter.formatReport True [ ( file, [ error ] ) ]
+                    |> Expect.equal (Reporter.formatReport False [ ( file, [ { error | fixedSource = Nothing } ] ) ])
+            )
+        ]
