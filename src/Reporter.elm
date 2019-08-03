@@ -12,6 +12,7 @@ type alias Error =
     , message : String
     , details : List String
     , range : Range
+    , fixedSource : Maybe (() -> String)
     }
 
 
@@ -71,7 +72,7 @@ formatReportForFileWithExtract ( file, errors ) =
 
 
 formatErrorWithExtract : File -> Error -> List Text
-formatErrorWithExtract file { ruleName, message, details, range } =
+formatErrorWithExtract file { ruleName, message, details, range, fixedSource } =
     let
         title : List Text
         title =
@@ -89,7 +90,21 @@ formatErrorWithExtract file { ruleName, message, details, range } =
             List.map Text.from details
                 |> List.intersperse (Text.from "\n\n")
     in
-    [ title, codeExtract_, details_ ]
+    [ title
+    , codeExtract_
+    , details_
+    , case fixedSource of
+        Just fixedSource_ ->
+            [ Text.from "I think I know how to fix this problem. If you run "
+            , "elm-lint" |> Text.from |> Text.inBlue
+            , Text.from " with the "
+            , "--fix" |> Text.from |> Text.inBlue
+            , Text.from "\noption, I can suggest you a solution and you can validate it."
+            ]
+
+        Nothing ->
+            []
+    ]
         |> List.filter (List.isEmpty >> not)
         |> List.intersperse [ Text.from "\n\n" ]
         |> List.concat
