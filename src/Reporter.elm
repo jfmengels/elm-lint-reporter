@@ -107,11 +107,13 @@ codeExtract file =
             []
 
         else if start.row == end.row then
-            [ Text.from <| getRowAtLine_ (start.row - 2)
-            , Text.from <| getRowAtLine_ (start.row - 1)
-            , underlineError (start.row - 1) { start = start.column, end = end.column }
-            , Text.from <| getRowAtLine_ end.row
-            ]
+            List.concat
+                [ [ Text.from <| getRowAtLine_ (start.row - 2)
+                  , Text.from <| getRowAtLine_ (start.row - 1)
+                  ]
+                , underlineError (start.row - 1) { start = start.column, end = end.column }
+                , [ Text.from <| getRowAtLine_ end.row ]
+                ]
 
         else
             let
@@ -131,32 +133,30 @@ codeExtract file =
             List.concat
                 [ [ Text.from <| getRowAtLine_ (start.row - 2)
                   , Text.from <| startLine
-                  , underlineError
-                        (start.row - 1)
-                        { start = start.column
-                        , end = String.length startLine - offsetBecauseOfLineNumber (start.row - 1)
-                        }
                   ]
+                , underlineError
+                    (start.row - 1)
+                    { start = start.column
+                    , end = String.length startLine - offsetBecauseOfLineNumber (start.row - 1)
+                    }
                 , linesBetweenStartAndEnd
                     |> List.indexedMap Tuple.pair
                     |> List.concatMap
                         (\( lineNumber, line ) ->
-                            [ Text.from <| line
-                            , underlineError
-                                lineNumber
-                                { start = getIndexOfFirstNonSpace (offsetBecauseOfLineNumber lineNumber) line
-                                , end = String.length line - offsetBecauseOfLineNumber lineNumber
-                                }
-                            ]
+                            (Text.from <| line)
+                                :: underlineError
+                                    lineNumber
+                                    { start = getIndexOfFirstNonSpace (offsetBecauseOfLineNumber lineNumber) line
+                                    , end = String.length line - offsetBecauseOfLineNumber lineNumber
+                                    }
                         )
-                , [ Text.from <| endLine
-                  , underlineError
-                        (end.row - 1)
-                        { start = getIndexOfFirstNonSpace (offsetBecauseOfLineNumber (end.row - 1)) endLine
-                        , end = String.length endLine - offsetBecauseOfLineNumber (end.row - 1)
-                        }
-                  , Text.from <| getRowAtLine_ end.row
-                  ]
+                , [ Text.from <| endLine ]
+                , underlineError
+                    (end.row - 1)
+                    { start = getIndexOfFirstNonSpace (offsetBecauseOfLineNumber (end.row - 1)) endLine
+                    , end = String.length endLine - offsetBecauseOfLineNumber (end.row - 1)
+                    }
+                , [ Text.from <| getRowAtLine_ end.row ]
                 ]
 
 
@@ -191,16 +191,14 @@ getRowAtLine file =
                 ""
 
 
-underlineError : Int -> { start : Int, end : Int } -> Text
+underlineError : Int -> { start : Int, end : Int } -> List Text
 underlineError lineNumber { start, end } =
-    let
-        baseText : String
-        baseText =
-            String.repeat (offsetBecauseOfLineNumber lineNumber + start - 1) " " ++ String.repeat (end - start) "^" ++ "\n"
-    in
-    baseText
+    [ Text.from <| String.repeat (offsetBecauseOfLineNumber lineNumber + start - 1) " "
+    , String.repeat (end - start) "^"
         |> Text.from
         |> Text.inRed
+    , Text.from "\n"
+    ]
 
 
 offsetBecauseOfLineNumber : Int -> Int
