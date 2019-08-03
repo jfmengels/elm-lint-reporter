@@ -228,25 +228,27 @@ formatReports errors =
         a :: b :: restOfErrors ->
             List.concat
                 [ formatReportForFileWithExtract a
-                , [ fileSeparator a b ]
+                , fileSeparator a b
                 , formatReports (b :: restOfErrors)
                 ]
 
 
-fileSeparator : ( File, List Error ) -> ( File, List Error ) -> Text
+fileSeparator : ( File, List Error ) -> ( File, List Error ) -> List Text
 fileSeparator a b =
     let
-        str : String
-        str =
-            "\n\n"
-                ++ String.padLeft 80 ' ' (fileIdentifier a ++ "  ↑    ")
-                ++ "\n====o======================================================================o===="
-                ++ "\n    ↓  "
-                ++ fileIdentifier b
-                ++ "\n\n\n"
+        identifierAbove : String
+        identifierAbove =
+            fileIdentifier a
     in
-    Text.from str
+    [ Text.from <| "\n\n" ++ String.repeat (73 - String.length identifierAbove) " "
+    , (fileIdentifier a ++ "  ↑")
+        ++ "\n====o======================================================================o===="
+        ++ "\n    ↓  "
+        ++ fileIdentifier b
+        |> Text.from
         |> Text.inRed
+    , Text.from "\n\n\n"
+    ]
 
 
 fileIdentifier : ( File, List Error ) -> String
