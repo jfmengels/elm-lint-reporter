@@ -98,7 +98,7 @@ formatErrorWithExtract isFixing file { ruleName, message, details, range, hasFix
         , "elm-lint" |> Text.from |> Text.inBlue
         , Text.from " with the "
         , "--fix" |> Text.from |> Text.inBlue
-        , Text.from "\noption, I can suggest you a solution and you can validate it."
+        , Text.from "\noption, I can suggest a solution and you can validate it."
         ]
 
       else
