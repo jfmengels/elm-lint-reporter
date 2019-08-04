@@ -95,7 +95,7 @@ a = Debug.log "debug" 1"""
                         { start = { row = 2, column = 5 }
                         , end = { row = 2, column = 10 }
                         }
-                  , fixedSource = Nothing
+                  , hasFix = False
                   }
                 ]
               )
@@ -163,7 +163,7 @@ b = foo <| Debug.log "other debug" 1"""
                             { start = { row = 2, column = 5 }
                             , end = { row = 2, column = 10 }
                             }
-                      , fixedSource = Nothing
+                      , hasFix = False
                       }
                     , { moduleName = Just "FileA"
                       , ruleName = "NoDebug"
@@ -173,7 +173,7 @@ b = foo <| Debug.log "other debug" 1"""
                             { start = { row = 3, column = 12 }
                             , end = { row = 3, column = 17 }
                             }
-                      , fixedSource = Nothing
+                      , hasFix = False
                       }
                     ]
                   )
@@ -257,7 +257,7 @@ a = Debug.log "debug" 1"""
                             { start = { row = 2, column = 5 }
                             , end = { row = 2, column = 10 }
                             }
-                      , fixedSource = Nothing
+                      , hasFix = False
                       }
                     ]
                   )
@@ -276,7 +276,7 @@ a = Debug.log "debug" 1"""
                             { start = { row = 2, column = 5 }
                             , end = { row = 2, column = 10 }
                             }
-                      , fixedSource = Nothing
+                      , hasFix = False
                       }
                     ]
                   )
@@ -295,7 +295,7 @@ a = Debug.log "debug" 1"""
                             { start = { row = 2, column = 5 }
                             , end = { row = 2, column = 10 }
                             }
-                      , fixedSource = Nothing
+                      , hasFix = False
                       }
                     ]
                   )
@@ -425,8 +425,7 @@ a = Debug.log "debug" 1"""
                             { start = { row = 2, column = 5 }
                             , end = { row = 2, column = 10 }
                             }
-                      , fixedSource = Just <| always """module FileA exposing (a)
-  a = 1"""
+                      , hasFix = True
                       }
                     ]
                   )
@@ -490,11 +489,10 @@ option, I can suggest you a solution and you can validate it.
                             { start = { row = 2, column = 5 }
                             , end = { row = 2, column = 10 }
                             }
-                        , fixedSource = Just <| always """module FileA exposing (a)
-      a = 1"""
+                        , hasFix = True
                         }
                 in
                 Reporter.formatReport True [ ( file, [ error ] ) ]
-                    |> Expect.equal (Reporter.formatReport False [ ( file, [ { error | fixedSource = Nothing } ] ) ])
+                    |> Expect.equal (Reporter.formatReport False [ ( file, [ { error | hasFix = False } ] ) ])
             )
         ]

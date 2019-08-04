@@ -12,7 +12,7 @@ type alias Error =
     , message : String
     , details : List String
     , range : Range
-    , fixedSource : Maybe (() -> String)
+    , hasFix : Bool
     }
 
 
@@ -72,7 +72,7 @@ formatReportForFileWithExtract isFixing ( file, errors ) =
 
 
 formatErrorWithExtract : Bool -> File -> Error -> List Text
-formatErrorWithExtract isFixing file { ruleName, message, details, range, fixedSource } =
+formatErrorWithExtract isFixing file { ruleName, message, details, range, hasFix } =
     let
         title : List Text
         title =
@@ -93,17 +93,16 @@ formatErrorWithExtract isFixing file { ruleName, message, details, range, fixedS
     [ title
     , codeExtract_
     , details_
-    , case ( isFixing, fixedSource ) of
-        ( False, Just fixedSource_ ) ->
-            [ Text.from "I think I know how to fix this problem. If you run "
-            , "elm-lint" |> Text.from |> Text.inBlue
-            , Text.from " with the "
-            , "--fix" |> Text.from |> Text.inBlue
-            , Text.from "\noption, I can suggest you a solution and you can validate it."
-            ]
+    , if hasFix && not isFixing then
+        [ Text.from "I think I know how to fix this problem. If you run "
+        , "elm-lint" |> Text.from |> Text.inBlue
+        , Text.from " with the "
+        , "--fix" |> Text.from |> Text.inBlue
+        , Text.from "\noption, I can suggest you a solution and you can validate it."
+        ]
 
-        _ ->
-            []
+      else
+        []
     ]
         |> List.filter (List.isEmpty >> not)
         |> List.intersperse [ Text.from "\n\n" ]
