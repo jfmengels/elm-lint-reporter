@@ -1,4 +1,10 @@
-module Reporter exposing (Error, File, formatReport)
+module Reporter exposing (Error, File, Mode(..), formatReport)
+
+{-| Formats the result of `elm-lint` in a nice human-readable way.
+
+@docs Error, File, Mode, formatReport
+
+-}
 
 import Array exposing (Array)
 import Text exposing (Text)
@@ -16,6 +22,12 @@ type alias Error =
     }
 
 
+{-| Represents a file.
+
+  - path is the file path
+  - source is the raw contents of the file
+
+-}
 type alias File =
     { path : String
     , source : String
@@ -28,8 +40,17 @@ type alias Range =
     }
 
 
-formatReport : Bool -> List ( File, List Error ) -> List { str : String, color : Maybe ( Int, Int, Int ) }
-formatReport isFixing errors =
+{-| Mode in which `elm-lint` is running.
+-}
+type Mode
+    = Linting
+    | Fixing
+
+
+{-| Reports the errors reported by `elm-lint` in a nice human-readable way.
+-}
+formatReport : Mode -> List ( File, List Error ) -> List { str : String, color : Maybe ( Int, Int, Int ) }
+formatReport lintMode errors =
     let
         numberOfErrors : Int
         numberOfErrors =
@@ -44,19 +65,19 @@ formatReport isFixing errors =
     else
         [ errors
             |> List.filter (Tuple.second >> List.isEmpty >> not)
-            |> formatReports isFixing
+            |> formatReports lintMode
         , [ Text.from "\n" ]
         ]
             |> List.concat
             |> List.map Text.toRecord
 
 
-formatReportForFileWithExtract : Bool -> ( File, List Error ) -> List Text
-formatReportForFileWithExtract isFixing ( file, errors ) =
+formatReportForFileWithExtract : Mode -> ( File, List Error ) -> List Text
+formatReportForFileWithExtract lintMode ( file, errors ) =
     let
         formattedErrors : List (List Text)
         formattedErrors =
-            List.map (formatErrorWithExtract isFixing file) errors
+            List.map (formatErrorWithExtract lintMode file) errors
 
         prefix : String
         prefix =
@@ -71,8 +92,8 @@ formatReportForFileWithExtract isFixing ( file, errors ) =
     header :: Text.from "\n\n" :: Text.join "\n\n\n" formattedErrors
 
 
-formatErrorWithExtract : Bool -> File -> Error -> List Text
-formatErrorWithExtract isFixing file { ruleName, message, details, range, hasFix } =
+formatErrorWithExtract : Mode -> File -> Error -> List Text
+formatErrorWithExtract lintMode file { ruleName, message, details, range, hasFix } =
     let
         title : List Text
         title =
@@ -93,16 +114,21 @@ formatErrorWithExtract isFixing file { ruleName, message, details, range, hasFix
     [ title
     , codeExtract_
     , details_
-    , if hasFix && not isFixing then
-        [ Text.from "I think I know how to fix this problem. If you run "
-        , "elm-lint" |> Text.from |> Text.inBlue
-        , Text.from " with the "
-        , "--fix" |> Text.from |> Text.inBlue
-        , Text.from "\noption, I can suggest a solution and you can validate it."
-        ]
+    , case lintMode of
+        Linting ->
+            if hasFix then
+                [ Text.from "I think I know how to fix this problem. If you run "
+                , "elm-lint" |> Text.from |> Text.inBlue
+                , Text.from " with the "
+                , "--fix" |> Text.from |> Text.inBlue
+                , Text.from "\noption, I can suggest a solution and you can validate it."
+                ]
 
-      else
-        []
+            else
+                []
+
+        Fixing ->
+            []
     ]
         |> List.filter (List.isEmpty >> not)
         |> List.intersperse [ Text.from "\n\n" ]
@@ -230,20 +256,20 @@ totalNumberOfErrors errors =
         |> List.length
 
 
-formatReports : Bool -> List ( File, List Error ) -> List Text
-formatReports isFixing errors =
+formatReports : Mode -> List ( File, List Error ) -> List Text
+formatReports lintMode errors =
     case errors of
         [] ->
             []
 
         [ error ] ->
-            formatReportForFileWithExtract isFixing error
+            formatReportForFileWithExtract lintMode error
 
         a :: b :: restOfErrors ->
             List.concat
-                [ formatReportForFileWithExtract isFixing a
+                [ formatReportForFileWithExtract lintMode a
                 , fileSeparator a b
-                , formatReports isFixing (b :: restOfErrors)
+                , formatReports lintMode (b :: restOfErrors)
                 ]
 
 

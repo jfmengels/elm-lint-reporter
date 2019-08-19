@@ -68,7 +68,7 @@ a = Debug.log "debug" 1"""
               , []
               )
             ]
-                |> Reporter.formatReport False
+                |> Reporter.formatReport Reporter.Linting
                 |> expect
                     { withoutColors = "I found no linting errors.\nYou're all good!\n"
                     , withColors = "I found no linting errors.\nYou're all good!\n"
@@ -106,7 +106,7 @@ a = Debug.log "debug" 1"""
               , []
               )
             ]
-                |> Reporter.formatReport False
+                |> Reporter.formatReport Reporter.Linting
                 |> expect
                     { withoutColors = """-- ELM-LINT ERROR -------------------------------------------------------- FileA
 
@@ -184,7 +184,7 @@ a = Debug.log "debug" 1"""
                   , []
                   )
                 ]
-                    |> Reporter.formatReport False
+                    |> Reporter.formatReport Reporter.Linting
                     |> expect
                         { withoutColors = """-- ELM-LINT ERROR -------------------------------------------------------- FileA
 
@@ -300,7 +300,7 @@ a = Debug.log "debug" 1"""
                     ]
                   )
                 ]
-                    |> Reporter.formatReport False
+                    |> Reporter.formatReport Reporter.Linting
                     |> expect
                         { withoutColors = """-- ELM-LINT ERROR -------------------------------------------------------- FileA
 
@@ -430,7 +430,7 @@ a = Debug.log "debug" 1"""
                     ]
                   )
                 ]
-                    |> Reporter.formatReport False
+                    |> Reporter.formatReport Reporter.Linting
                     |> expect
                         { withoutColors = """-- ELM-LINT ERROR -------------------------------------------------------- FileA
 
@@ -492,7 +492,7 @@ option, I can suggest a solution and you can validate it.
                         , hasFix = True
                         }
                 in
-                Reporter.formatReport True [ ( file, [ error ] ) ]
-                    |> Expect.equal (Reporter.formatReport False [ ( file, [ { error | hasFix = False } ] ) ])
+                Reporter.formatReport Reporter.Fixing [ ( file, [ error ] ) ]
+                    |> Expect.equal (Reporter.formatReport Reporter.Linting [ ( file, [ { error | hasFix = False } ] ) ])
             )
         ]
