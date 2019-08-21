@@ -1,7 +1,8 @@
 module Text exposing
-    ( Text
+    ( Text, TextContent
     , from
     , inBlue, inRed
+    , withGreenBackground, withRedBackground
     , join
     , toRecord
     )
@@ -19,7 +20,7 @@ module Text exposing
 
 # Definition
 
-@docs Text
+@docs Text, TextContent
 
 
 # Constructors
@@ -30,6 +31,7 @@ module Text exposing
 # Modifiers
 
 @docs inBlue, inRed
+@docs withGreenBackground, withRedBackground
 
 
 # Working with lists
@@ -49,10 +51,14 @@ module Text exposing
 {-| Represents text with some styling applied to it.
 -}
 type Text
-    = Text
-        { str : String
-        , color : Maybe ( Int, Int, Int )
-        }
+    = Text TextContent
+
+
+type alias TextContent =
+    { str : String
+    , color : Maybe ( Int, Int, Int )
+    , backgroundColor : Maybe ( Int, Int, Int )
+    }
 
 
 
@@ -66,6 +72,7 @@ from value =
     Text
         { str = value
         , color = Nothing
+        , backgroundColor = Nothing
         }
 
 
@@ -81,6 +88,16 @@ inBlue (Text text) =
 inRed : Text -> Text
 inRed (Text text) =
     Text { text | color = Just ( 255, 0, 0 ) }
+
+
+withRedBackground : Text -> Text
+withRedBackground (Text text) =
+    Text { text | backgroundColor = Just ( 128, 0, 0 ) }
+
+
+withGreenBackground : Text -> Text
+withGreenBackground (Text text) =
+    Text { text | backgroundColor = Just ( 0, 128, 0 ) }
 
 
 
@@ -100,6 +117,6 @@ join sep chunks =
 {-| Transform a text into a record that can then be transformed for display in
 different mediums.
 -}
-toRecord : Text -> { str : String, color : Maybe ( Int, Int, Int ) }
+toRecord : Text -> TextContent
 toRecord (Text text) =
     text

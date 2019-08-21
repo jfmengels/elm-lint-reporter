@@ -7,12 +7,7 @@ module FormatTester exposing (expect)
 -}
 
 import Expect exposing (Expectation)
-
-
-type alias Text =
-    { str : String
-    , color : Maybe ( Int, Int, Int )
-    }
+import Reporter exposing (TextContent)
 
 
 {-| Make an expectation of the result of a formatting function.
@@ -28,12 +23,12 @@ Two assertions will be made:
             \() ->
                 formatFunction someInput
                     |> FormatTester.expect
-                        { withoutColors = "some highlighted text"
-                        , withColors = "some [highlighted](255-255-255) text"
+                        { withoutColors = "some highlighted text with background and with both"
+                        , withColors = "some [highlighted](255-0-0) text with [background](bg-16-16-16) and with [both](255-255-255-bg-16-16-16)"
                         }
 
 -}
-expect : { withoutColors : String, withColors : String } -> List Text -> Expectation
+expect : { withoutColors : String, withColors : String } -> List TextContent -> Expectation
 expect { withoutColors, withColors } =
     Expect.all
         [ \textList -> Expect.equal withoutColors (formatWithoutColors textList)
@@ -41,23 +36,34 @@ expect { withoutColors, withColors } =
         ]
 
 
-formatWithoutColors : List Text -> String
+formatWithoutColors : List TextContent -> String
 formatWithoutColors textList =
     textList
         |> List.map .str
         |> String.join ""
 
 
-formatWithColors : List Text -> String
+formatWithColors : List TextContent -> String
 formatWithColors textList =
     textList
         |> List.map
-            (\{ str, color } ->
-                case color of
-                    Just ( r, g, b ) ->
-                        "[" ++ str ++ "](" ++ String.fromInt r ++ "-" ++ String.fromInt r ++ "-" ++ String.fromInt r ++ ")"
+            (\{ str, color, backgroundColor } ->
+                case ( color, backgroundColor ) of
+                    ( Just color_, Just backgroundColor_ ) ->
+                        "[" ++ str ++ "](" ++ colorToString color_ ++ "-br-" ++ colorToString backgroundColor_ ++ ")"
 
-                    Nothing ->
+                    ( Nothing, Just backgroundColor_ ) ->
+                        "[" ++ str ++ "](bg-" ++ colorToString backgroundColor_ ++ ")"
+
+                    ( Just color_, Nothing ) ->
+                        "[" ++ str ++ "](" ++ colorToString color_ ++ ")"
+
+                    ( Nothing, Nothing ) ->
                         str
             )
         |> String.join ""
+
+
+colorToString : ( Int, Int, Int ) -> String
+colorToString ( r, g, b ) =
+    String.fromInt r ++ "-" ++ String.fromInt g ++ "-" ++ String.fromInt b

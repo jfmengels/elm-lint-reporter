@@ -1,6 +1,6 @@
 module Reporter exposing
     ( Error, File
-    , Mode(..), formatReport
+    , Mode(..), formatReport, TextContent
     , formatFixProposal
     )
 
@@ -11,7 +11,7 @@ module Reporter exposing
 
 # Report
 
-@docs Mode, formatReport
+@docs Mode, formatReport, TextContent
 
 
 # Fix
@@ -49,6 +49,17 @@ type alias File =
     }
 
 
+{-| Styled text. Reporters return a list of these, that should to be styled
+according to the associated colors and joined together.
+-}
+type alias TextContent =
+    -- Should be the same as Text.TextContent
+    { str : String
+    , color : Maybe ( Int, Int, Int )
+    , backgroundColor : Maybe ( Int, Int, Int )
+    }
+
+
 type alias Range =
     { start : { row : Int, column : Int }
     , end : { row : Int, column : Int }
@@ -64,7 +75,7 @@ type Mode
 
 {-| Reports the errors reported by `elm-lint` in a nice human-readable way.
 -}
-formatReport : Mode -> List ( File, List Error ) -> List { str : String, color : Maybe ( Int, Int, Int ) }
+formatReport : Mode -> List ( File, List Error ) -> List TextContent
 formatReport lintMode errors =
     let
         numberOfErrors : Int
@@ -326,7 +337,9 @@ fileIdentifier ( file, errors ) =
 -- FIX
 
 
-formatFixProposal : File -> Error -> String -> List { str : String, color : Maybe ( Int, Int, Int ) }
+{-| Reports a fix proposal for a single error reported by `elm-lint` in a nice human-readable way.
+-}
+formatFixProposal : File -> Error -> String -> List TextContent
 formatFixProposal file error fixedSource =
     List.concat
         [ Text.join "\n\n"
@@ -346,26 +359,35 @@ diff : String -> String -> List Text
 diff before after =
     Diff.diffLines before after
         |> addLineNumbers
-        |> List.map (\str -> [ Text.from <| extractStringFromChange str ])
-        |> Text.join "\n"
+        |> List.map extractValueFromChange
+        |> List.intersperse (Text.from "\n")
 
 
-addLineNumbers : List (Diff.Change String) -> List (Diff.Change String)
+addLineNumbers : List (Diff.Change String) -> List (Diff.Change Text)
 addLineNumbers changes =
     List.foldl
         (\change ( lineNumber, diffLines ) ->
             case change of
                 Diff.NoChange str ->
-                    ( lineNumber + 1, Diff.NoChange (prependWithLineNumber lineNumber str) :: diffLines )
+                    ( lineNumber + 1, Diff.NoChange (Text.from <| prependWithLineNumber lineNumber str) :: diffLines )
 
                 Diff.Removed str ->
-                    ( lineNumber + 1, Diff.Removed (prependWithLineNumber lineNumber str) :: diffLines )
+                    let
+                        line : Text
+                        line =
+                            prependWithLineNumber lineNumber str
+                                |> Text.from
+                                |> Text.withRedBackground
+                    in
+                    ( lineNumber + 1, Diff.Removed line :: diffLines )
 
                 Diff.Added str ->
                     let
-                        line : String
+                        line : Text
                         line =
-                            String.repeat (offsetBecauseOfLineNumber lineNumber) " " ++ str
+                            (String.repeat (offsetBecauseOfLineNumber lineNumber) " " ++ str)
+                                |> Text.from
+                                |> Text.withGreenBackground
                     in
                     ( lineNumber, Diff.Added line :: diffLines )
         )
@@ -377,20 +399,20 @@ addLineNumbers changes =
         |> dropNonInterestingUnchangedLines
 
 
-extractStringFromChange : Diff.Change String -> String
-extractStringFromChange change =
+extractValueFromChange : Diff.Change a -> a
+extractValueFromChange change =
     case change of
-        Diff.NoChange str ->
-            str
+        Diff.NoChange value ->
+            value
 
-        Diff.Removed str ->
-            str
+        Diff.Removed value ->
+            value
 
-        Diff.Added str ->
-            str
+        Diff.Added value ->
+            value
 
 
-dropNonInterestingUnchangedLines : List (Diff.Change String) -> List (Diff.Change String)
+dropNonInterestingUnchangedLines : List (Diff.Change a) -> List (Diff.Change a)
 dropNonInterestingUnchangedLines changes =
     case findIndex (not << isNoChange) changes of
         Nothing ->

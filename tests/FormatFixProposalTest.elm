@@ -75,13 +75,13 @@ I think I can fix this. Here is my proposal:
    a = 1
 3| other=lines
 """
-                    , withColors = """[-- ELM-LINT ERROR -------------------------------------------------------- FileA](51-51-51)
+                    , withColors = """[-- ELM-LINT ERROR -------------------------------------------------------- FileA](51-187-200)
 
-[NoDebug](255-255-255): Do not use Debug
+[NoDebug](255-0-0): Do not use Debug
 
 1| module FileA exposing (a)
 2| a = Debug.log "debug" 1
-       [^^^^^](255-255-255)
+       [^^^^^](255-0-0)
 3| other=lines
 
 
@@ -89,11 +89,11 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum cursus erat 
 
 Donec sed ligula ac mi pretium mattis et in nisi. Nulla nec ex hendrerit, sollicitudin eros at, mattis tortor. Ut lacinia ornare lectus in vestibulum. Nam congue ultricies dolor, in venenatis nulla sagittis nec. In ac leo sit amet diam iaculis ornare eu non odio. Proin sed orci et urna tincidunt tincidunt quis a lacus. Donec euismod odio nulla, sit amet iaculis lorem interdum sollicitudin. Vivamus bibendum quam urna, in tristique lacus iaculis id. In tempor lectus ipsum, vehicula bibendum magna pretium vitae. Cras ullamcorper rutrum nunc non sollicitudin. Curabitur tempus eleifend nunc, sed ornare nisl tincidunt vel. Maecenas eu nisl ligula.
 
-[I think I can fix this. Here is my proposal:](51-51-51)
+[I think I can fix this. Here is my proposal:](51-187-200)
 
 1| module FileA exposing (a)
-2| a = Debug.log "debug" 1
-   a = 1
+[2| a = Debug.log "debug" 1](bg-128-0-0)
+[   a = 1](bg-0-128-0)
 3| other=lines
 """
                     }
