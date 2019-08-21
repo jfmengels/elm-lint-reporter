@@ -144,10 +144,8 @@ formatErrorWithExtract lintMode file { ruleName, message, details, range, hasFix
         Linting ->
             if hasFix then
                 [ Text.from "I think I know how to fix this problem. If you run "
-                , "elm-lint" |> Text.from |> Text.inBlue
-                , Text.from " with the "
-                , "--fix" |> Text.from |> Text.inBlue
-                , Text.from "\noption, I can suggest a solution and you can validate it."
+                , "elm-lint --fix" |> Text.from |> Text.inBlue
+                , Text.from ", I can\nsuggest a solution and you can validate it."
                 ]
 
             else
