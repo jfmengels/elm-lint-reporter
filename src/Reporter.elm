@@ -1,12 +1,27 @@
-module Reporter exposing (Error, File, Mode(..), formatReport)
+module Reporter exposing
+    ( Error, File
+    , Mode(..), formatReport
+    , formatFixProposal
+    )
 
 {-| Formats the result of `elm-lint` in a nice human-readable way.
 
-@docs Error, File, Mode, formatReport
+@docs Error, File
+
+
+# Report
+
+@docs Mode, formatReport
+
+
+# Fix
+
+@docs formatFixProposal
 
 -}
 
 import Array exposing (Array)
+import Diff
 import Text exposing (Text)
 
 
@@ -222,13 +237,19 @@ getRowAtLine file =
         case Array.get rowIndex lines of
             Just line ->
                 if String.trim line /= "" then
-                    String.fromInt (rowIndex + 1) ++ "| " ++ line ++ "\n"
+                    (line ++ "\n")
+                        |> prependWithLineNumber rowIndex
 
                 else
                     ""
 
             Nothing ->
                 ""
+
+
+prependWithLineNumber : Int -> String -> String
+prependWithLineNumber rowIndex line =
+    String.fromInt (rowIndex + 1) ++ "| " ++ line
 
 
 underlineError : Int -> { start : Int, end : Int } -> List Text
@@ -299,3 +320,113 @@ fileIdentifier ( file, errors ) =
 
         Nothing ->
             file.path
+
+
+
+-- FIX
+
+
+formatFixProposal : File -> Error -> String -> List { str : String, color : Maybe ( Int, Int, Int ) }
+formatFixProposal file error fixedSource =
+    List.concat
+        [ Text.join "\n\n"
+            [ formatReportForFileWithExtract Fixing ( file, [ error ] )
+            , [ "I think I can fix this. Here is my proposal:"
+                    |> Text.from
+                    |> Text.inBlue
+              ]
+            , diff file.source fixedSource
+            ]
+        , [ Text.from "\n" ]
+        ]
+        |> List.map Text.toRecord
+
+
+diff : String -> String -> List Text
+diff before after =
+    Diff.diffLines before after
+        |> addLineNumbers
+        |> List.map (\str -> [ Text.from <| extractStringFromChange str ])
+        |> Text.join "\n"
+
+
+addLineNumbers : List (Diff.Change String) -> List (Diff.Change String)
+addLineNumbers changes =
+    List.foldl
+        (\change ( lineNumber, diffLines ) ->
+            case change of
+                Diff.NoChange str ->
+                    ( lineNumber + 1, Diff.NoChange (prependWithLineNumber lineNumber str) :: diffLines )
+
+                Diff.Removed str ->
+                    ( lineNumber + 1, Diff.Removed (prependWithLineNumber lineNumber str) :: diffLines )
+
+                Diff.Added str ->
+                    let
+                        line : String
+                        line =
+                            String.repeat (offsetBecauseOfLineNumber lineNumber) " " ++ str
+                    in
+                    ( lineNumber, Diff.Added line :: diffLines )
+        )
+        ( 0, [] )
+        changes
+        |> Tuple.second
+        |> dropNonInterestingUnchangedLines
+        |> List.reverse
+        |> dropNonInterestingUnchangedLines
+
+
+extractStringFromChange : Diff.Change String -> String
+extractStringFromChange change =
+    case change of
+        Diff.NoChange str ->
+            str
+
+        Diff.Removed str ->
+            str
+
+        Diff.Added str ->
+            str
+
+
+dropNonInterestingUnchangedLines : List (Diff.Change String) -> List (Diff.Change String)
+dropNonInterestingUnchangedLines changes =
+    case findIndex (not << isNoChange) changes of
+        Nothing ->
+            changes
+
+        Just index ->
+            List.drop (index - 1) changes
+
+
+findIndex : (a -> Bool) -> List a -> Maybe Int
+findIndex predicate list =
+    findIndexInternal predicate 0 list
+
+
+findIndexInternal : (a -> Bool) -> Int -> List a -> Maybe Int
+findIndexInternal predicate index list =
+    case list of
+        [] ->
+            Nothing
+
+        item :: rest ->
+            if predicate item then
+                Just index
+
+            else
+                findIndexInternal predicate (index + 1) rest
+
+
+isNoChange : Diff.Change a -> Bool
+isNoChange change =
+    case change of
+        Diff.NoChange _ ->
+            True
+
+        Diff.Removed _ ->
+            False
+
+        Diff.Added _ ->
+            False
