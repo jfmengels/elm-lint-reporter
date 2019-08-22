@@ -1,17 +1,20 @@
 module Reporter exposing
-    ( Error, File
-    , Mode(..), formatReport, TextContent
+    ( Error, File, TextContent
+    , Mode(..), formatReport
     , formatFixProposal
     )
 
 {-| Formats the result of `elm-lint` in a nice human-readable way.
 
-@docs Error, File
+
+# Types
+
+@docs Error, File, TextContent
 
 
 # Report
 
-@docs Mode, formatReport, TextContent
+@docs Mode, formatReport
 
 
 # Fix
