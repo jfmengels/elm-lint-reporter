@@ -375,7 +375,7 @@ addLineNumbers changes =
                         line =
                             prependWithLineNumber lineNumber str
                                 |> Text.from
-                                |> Text.withRedBackground
+                                |> Text.inRed
                     in
                     ( lineNumber + 1, Diff.Removed line :: diffLines )
 
@@ -385,7 +385,7 @@ addLineNumbers changes =
                         line =
                             (String.repeat (offsetBecauseOfLineNumber lineNumber) " " ++ str)
                                 |> Text.from
-                                |> Text.withGreenBackground
+                                |> Text.inGreen
                     in
                     ( lineNumber, Diff.Added line :: diffLines )
         )

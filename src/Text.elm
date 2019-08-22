@@ -1,8 +1,7 @@
 module Text exposing
     ( Text, TextContent
     , from
-    , inBlue, inRed
-    , withGreenBackground, withRedBackground
+    , inBlue, inRed, inGreen
     , join
     , toRecord
     )
@@ -30,8 +29,7 @@ module Text exposing
 
 # Modifiers
 
-@docs inBlue, inRed
-@docs withGreenBackground, withRedBackground
+@docs inBlue, inRed, inGreen
 
 
 # Working with lists
@@ -90,14 +88,9 @@ inRed (Text text) =
     Text { text | color = Just ( 255, 0, 0 ) }
 
 
-withRedBackground : Text -> Text
-withRedBackground (Text text) =
-    Text { text | backgroundColor = Just ( 128, 0, 0 ) }
-
-
-withGreenBackground : Text -> Text
-withGreenBackground (Text text) =
-    Text { text | backgroundColor = Just ( 0, 128, 0 ) }
+inGreen : Text -> Text
+inGreen (Text text) =
+    Text { text | color = Just ( 0, 128, 0 ) }
 
 
 
