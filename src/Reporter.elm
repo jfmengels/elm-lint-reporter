@@ -65,8 +65,14 @@ type alias TextContent =
 
 
 type alias Range =
-    { start : { row : Int, column : Int }
-    , end : { row : Int, column : Int }
+    { start :
+        { row : Int
+        , column : Int
+        }
+    , end :
+        { row : Int
+        , column : Int
+        }
     }
 
 
