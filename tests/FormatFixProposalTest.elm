@@ -92,8 +92,8 @@ Donec sed ligula ac mi pretium mattis et in nisi. Nulla nec ex hendrerit, sollic
 [I think I can fix this. Here is my proposal:](51-187-200)
 
 1| module FileA exposing (a)
-[2| a = Debug.log "debug" 1](bg-128-0-0)
-[   a = 1](bg-0-128-0)
+[2| a = Debug.log "debug" 1](255-0-0)
+[   a = 1](0-128-0)
 3| other=lines
 """
                     }
