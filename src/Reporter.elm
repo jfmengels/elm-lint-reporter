@@ -393,7 +393,7 @@ addLineNumbers changes =
                     let
                         line : Text
                         line =
-                            (String.repeat (offsetBecauseOfLineNumber lineNumber) " " ++ str)
+                            prependWithLineNumber lineNumber str
                                 |> Text.from
                                 |> Text.inGreen
                     in

@@ -66,7 +66,7 @@ I think I can fix this. Here is my proposal:
 
 1| module FileA exposing (a)
 2| a = Debug.log "debug" 1
-   a = 1
+3| a = 1
 3| other=lines
 """
                         , withColors = """[-- ELM-LINT ERROR -------------------------------------------------------- FileA](51-187-200)
@@ -87,7 +87,7 @@ Donec sed ligula ac mi pretium mattis et in nisi. Nulla nec ex hendrerit, sollic
 
 1| module FileA exposing (a)
 [2| a = Debug.log "debug" 1](255-0-0)
-[   a = 1](0-128-0)
+[3| a = 1](0-128-0)
 3| other=lines
 """
                         }
@@ -149,7 +149,7 @@ I think I can fix this. Here is my proposal:
 1| module Some.File exposing (a)
 2| a =
 3|     1
-4| """ ++ "\n   " ++ """
+4| """ ++ "\n5| " ++ """
 5| b =
 """
                         , withColors =
@@ -171,7 +171,7 @@ Some details
 [2| a =](255-0-0)
 [3|     1](255-0-0)
 4| """ ++ """
-[   ](0-128-0)
+[5| ](0-128-0)
 5| b =
 """
                         }
