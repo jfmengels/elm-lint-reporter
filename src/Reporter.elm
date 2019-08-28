@@ -28,7 +28,9 @@ import Diff
 import Text exposing (Text)
 
 
-{-| Error
+{-| Contents of an error. Convert the errors from
+[`Lint`](https://package.elm-lang.org/packages/jfmengels/elm-lint/4.0.0/Lint#Error)
+to this type.
 -}
 type alias Error =
     { moduleName : Maybe String
