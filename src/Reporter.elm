@@ -52,9 +52,12 @@ type alias File =
     }
 
 
-{-| Styled text. Reporters return a list of these, that should be styled in the
-viewing medium according to the associated colors and joined together without
-spaces.
+{-| Represents styled text.
+
+Formatter functions return a list of these, that should be
+styled in the viewing medium according to the associated colors and joined
+together without spaces.
+
 -}
 type alias TextContent =
     -- Should be the same as Text.TextContent
