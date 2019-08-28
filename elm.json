@@ -1,7 +1,7 @@
 {
     "type": "package",
     "name": "jfmengels/elm-lint-reporter",
-    "summary": "A reporter for elm-lint.",
+    "summary": "Formats the result of `elm-lint` in a nice human-readable way",
     "license": "BSD-3-Clause",
     "version": "1.0.0",
     "exposed-modules": [
