@@ -310,11 +310,11 @@ formatReports lintMode errors =
         [ error ] ->
             formatReportForFileWithExtract lintMode error
 
-        a :: b :: restOfErrors ->
+        firstError :: secondError :: restOfErrors ->
             List.concat
-                [ formatReportForFileWithExtract lintMode a
-                , fileSeparator a b
-                , formatReports lintMode (b :: restOfErrors)
+                [ formatReportForFileWithExtract lintMode firstError
+                , fileSeparator firstError secondError
+                , formatReports lintMode (secondError :: restOfErrors)
                 ]
 
 
