@@ -73,7 +73,7 @@ a = Debug.log "debug" 1"""
             ]
                 |> Reporter.formatReport Reporter.Linting
                 |> expect
-                    { withoutColors = """-- ELM-LINT ERROR -------------------------------------------------------- FileA
+                    { withoutColors = """-- ELM-LINT ERROR ------------------------------------------------ src/FileA.elm
 
 NoDebug: Do not use Debug
 
@@ -86,7 +86,7 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum cursus erat 
 
 Donec sed ligula ac mi pretium mattis et in nisi. Nulla nec ex hendrerit, sollicitudin eros at, mattis tortor. Ut lacinia ornare lectus in vestibulum. Nam congue ultricies dolor, in venenatis nulla sagittis nec. In ac leo sit amet diam iaculis ornare eu non odio. Proin sed orci et urna tincidunt tincidunt quis a lacus. Donec euismod odio nulla, sit amet iaculis lorem interdum sollicitudin. Vivamus bibendum quam urna, in tristique lacus iaculis id. In tempor lectus ipsum, vehicula bibendum magna pretium vitae. Cras ullamcorper rutrum nunc non sollicitudin. Curabitur tempus eleifend nunc, sed ornare nisl tincidunt vel. Maecenas eu nisl ligula.
 """
-                    , withColors = """[-- ELM-LINT ERROR -------------------------------------------------------- FileA](51-187-200)
+                    , withColors = """[-- ELM-LINT ERROR ------------------------------------------------ src/FileA.elm](51-187-200)
 
 [NoDebug](255-0-0): Do not use Debug
 
@@ -151,7 +151,7 @@ a = Debug.log "debug" 1"""
                 ]
                     |> Reporter.formatReport Reporter.Linting
                     |> expect
-                        { withoutColors = """-- ELM-LINT ERROR -------------------------------------------------------- FileA
+                        { withoutColors = """-- ELM-LINT ERROR ------------------------------------------------ src/FileA.elm
 
 NoDebug: Do not use Debug
 
@@ -177,7 +177,7 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum cursus erat 
 
 Donec sed ligula ac mi pretium mattis et in nisi. Nulla nec ex hendrerit, sollicitudin eros at, mattis tortor. Ut lacinia ornare lectus in vestibulum. Nam congue ultricies dolor, in venenatis nulla sagittis nec. In ac leo sit amet diam iaculis ornare eu non odio. Proin sed orci et urna tincidunt tincidunt quis a lacus. Donec euismod odio nulla, sit amet iaculis lorem interdum sollicitudin. Vivamus bibendum quam urna, in tristique lacus iaculis id. In tempor lectus ipsum, vehicula bibendum magna pretium vitae. Cras ullamcorper rutrum nunc non sollicitudin. Curabitur tempus eleifend nunc, sed ornare nisl tincidunt vel. Maecenas eu nisl ligula.
 """
-                        , withColors = """[-- ELM-LINT ERROR -------------------------------------------------------- FileA](51-187-200)
+                        , withColors = """[-- ELM-LINT ERROR ------------------------------------------------ src/FileA.elm](51-187-200)
 
 [NoDebug](255-0-0): Do not use Debug
 
@@ -267,7 +267,7 @@ a = Debug.log "debug" 1"""
                 ]
                     |> Reporter.formatReport Reporter.Linting
                     |> expect
-                        { withoutColors = """-- ELM-LINT ERROR -------------------------------------------------------- FileA
+                        { withoutColors = """-- ELM-LINT ERROR ------------------------------------------------ src/FileA.elm
 
 NoDebug: Do not use Debug
 
@@ -280,12 +280,12 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum cursus erat 
 
 Donec sed ligula ac mi pretium mattis et in nisi. Nulla nec ex hendrerit, sollicitudin eros at, mattis tortor. Ut lacinia ornare lectus in vestibulum. Nam congue ultricies dolor, in venenatis nulla sagittis nec. In ac leo sit amet diam iaculis ornare eu non odio. Proin sed orci et urna tincidunt tincidunt quis a lacus. Donec euismod odio nulla, sit amet iaculis lorem interdum sollicitudin. Vivamus bibendum quam urna, in tristique lacus iaculis id. In tempor lectus ipsum, vehicula bibendum magna pretium vitae. Cras ullamcorper rutrum nunc non sollicitudin. Curabitur tempus eleifend nunc, sed ornare nisl tincidunt vel. Maecenas eu nisl ligula.
 
-                                                                    FileA  ↑
+                                                            src/FileA.elm  ↑
 ====o======================================================================o====
-    ↓  FileB
+    ↓  src/FileB.elm
 
 
--- ELM-LINT ERROR -------------------------------------------------------- FileB
+-- ELM-LINT ERROR ------------------------------------------------ src/FileB.elm
 
 NoDebug: Do not use Debug
 
@@ -298,12 +298,12 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum cursus erat 
 
 Donec sed ligula ac mi pretium mattis et in nisi. Nulla nec ex hendrerit, sollicitudin eros at, mattis tortor. Ut lacinia ornare lectus in vestibulum. Nam congue ultricies dolor, in venenatis nulla sagittis nec. In ac leo sit amet diam iaculis ornare eu non odio. Proin sed orci et urna tincidunt tincidunt quis a lacus. Donec euismod odio nulla, sit amet iaculis lorem interdum sollicitudin. Vivamus bibendum quam urna, in tristique lacus iaculis id. In tempor lectus ipsum, vehicula bibendum magna pretium vitae. Cras ullamcorper rutrum nunc non sollicitudin. Curabitur tempus eleifend nunc, sed ornare nisl tincidunt vel. Maecenas eu nisl ligula.
 
-                                                                    FileB  ↑
+                                                            src/FileB.elm  ↑
 ====o======================================================================o====
-    ↓  FileC
+    ↓  src/FileC.elm
 
 
--- ELM-LINT ERROR -------------------------------------------------------- FileC
+-- ELM-LINT ERROR ------------------------------------------------ src/FileC.elm
 
 NoDebug: Do not use Debug
 
@@ -316,7 +316,7 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum cursus erat 
 
 Donec sed ligula ac mi pretium mattis et in nisi. Nulla nec ex hendrerit, sollicitudin eros at, mattis tortor. Ut lacinia ornare lectus in vestibulum. Nam congue ultricies dolor, in venenatis nulla sagittis nec. In ac leo sit amet diam iaculis ornare eu non odio. Proin sed orci et urna tincidunt tincidunt quis a lacus. Donec euismod odio nulla, sit amet iaculis lorem interdum sollicitudin. Vivamus bibendum quam urna, in tristique lacus iaculis id. In tempor lectus ipsum, vehicula bibendum magna pretium vitae. Cras ullamcorper rutrum nunc non sollicitudin. Curabitur tempus eleifend nunc, sed ornare nisl tincidunt vel. Maecenas eu nisl ligula.
 """
-                        , withColors = """[-- ELM-LINT ERROR -------------------------------------------------------- FileA](51-187-200)
+                        , withColors = """[-- ELM-LINT ERROR ------------------------------------------------ src/FileA.elm](51-187-200)
 
 [NoDebug](255-0-0): Do not use Debug
 
@@ -329,12 +329,12 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum cursus erat 
 
 Donec sed ligula ac mi pretium mattis et in nisi. Nulla nec ex hendrerit, sollicitudin eros at, mattis tortor. Ut lacinia ornare lectus in vestibulum. Nam congue ultricies dolor, in venenatis nulla sagittis nec. In ac leo sit amet diam iaculis ornare eu non odio. Proin sed orci et urna tincidunt tincidunt quis a lacus. Donec euismod odio nulla, sit amet iaculis lorem interdum sollicitudin. Vivamus bibendum quam urna, in tristique lacus iaculis id. In tempor lectus ipsum, vehicula bibendum magna pretium vitae. Cras ullamcorper rutrum nunc non sollicitudin. Curabitur tempus eleifend nunc, sed ornare nisl tincidunt vel. Maecenas eu nisl ligula.
 
-                                                                    [FileA  ↑
+                                                            [src/FileA.elm  ↑
 ====o======================================================================o====
-    ↓  FileB](255-0-0)
+    ↓  src/FileB.elm](255-0-0)
 
 
-[-- ELM-LINT ERROR -------------------------------------------------------- FileB](51-187-200)
+[-- ELM-LINT ERROR ------------------------------------------------ src/FileB.elm](51-187-200)
 
 [NoDebug](255-0-0): Do not use Debug
 
@@ -347,12 +347,12 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum cursus erat 
 
 Donec sed ligula ac mi pretium mattis et in nisi. Nulla nec ex hendrerit, sollicitudin eros at, mattis tortor. Ut lacinia ornare lectus in vestibulum. Nam congue ultricies dolor, in venenatis nulla sagittis nec. In ac leo sit amet diam iaculis ornare eu non odio. Proin sed orci et urna tincidunt tincidunt quis a lacus. Donec euismod odio nulla, sit amet iaculis lorem interdum sollicitudin. Vivamus bibendum quam urna, in tristique lacus iaculis id. In tempor lectus ipsum, vehicula bibendum magna pretium vitae. Cras ullamcorper rutrum nunc non sollicitudin. Curabitur tempus eleifend nunc, sed ornare nisl tincidunt vel. Maecenas eu nisl ligula.
 
-                                                                    [FileB  ↑
+                                                            [src/FileB.elm  ↑
 ====o======================================================================o====
-    ↓  FileC](255-0-0)
+    ↓  src/FileC.elm](255-0-0)
 
 
-[-- ELM-LINT ERROR -------------------------------------------------------- FileC](51-187-200)
+[-- ELM-LINT ERROR ------------------------------------------------ src/FileC.elm](51-187-200)
 
 [NoDebug](255-0-0): Do not use Debug
 
@@ -397,7 +397,7 @@ a = Debug.log "debug" 1"""
                 ]
                     |> Reporter.formatReport Reporter.Linting
                     |> expect
-                        { withoutColors = """-- ELM-LINT ERROR -------------------------------------------------------- FileA
+                        { withoutColors = """-- ELM-LINT ERROR ------------------------------------------------ src/FileA.elm
 
 NoDebug: Do not use Debug
 
@@ -413,7 +413,7 @@ Donec sed ligula ac mi pretium mattis et in nisi. Nulla nec ex hendrerit, sollic
 I think I know how to fix this problem. If you run elm-lint --fix, I can
 suggest a solution and you can validate it.
 """
-                        , withColors = """[-- ELM-LINT ERROR -------------------------------------------------------- FileA](51-187-200)
+                        , withColors = """[-- ELM-LINT ERROR ------------------------------------------------ src/FileA.elm](51-187-200)
 
 [NoDebug](255-0-0): Do not use Debug
 

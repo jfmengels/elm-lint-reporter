@@ -337,13 +337,8 @@ fileSeparator a b =
 
 
 fileIdentifier : ( File, List Error ) -> String
-fileIdentifier ( file, errors ) =
-    case List.head errors |> Maybe.andThen .moduleName of
-        Just moduleName ->
-            moduleName
-
-        Nothing ->
-            file.path
+fileIdentifier ( file, _ ) =
+    file.path
 
 
 

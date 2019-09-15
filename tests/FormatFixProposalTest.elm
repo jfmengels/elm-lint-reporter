@@ -48,7 +48,7 @@ other2=lines2
                 in
                 Reporter.formatFixProposal file error fixedSource
                     |> expect
-                        { withoutColors = """-- ELM-LINT ERROR -------------------------------------------------------- FileA
+                        { withoutColors = """-- ELM-LINT ERROR ------------------------------------------------ src/FileA.elm
 
 NoDebug: Do not use Debug
 
@@ -69,7 +69,7 @@ I think I can fix this. Here is my proposal:
 3| a = 1
 3| other=lines
 """
-                        , withColors = """[-- ELM-LINT ERROR -------------------------------------------------------- FileA](51-187-200)
+                        , withColors = """[-- ELM-LINT ERROR ------------------------------------------------ src/FileA.elm](51-187-200)
 
 [NoDebug](255-0-0): Do not use Debug
 
@@ -110,7 +110,7 @@ Donec sed ligula ac mi pretium mattis et in nisi. Nulla nec ex hendrerit, sollic
 
                     file : File
                     file =
-                        { path = "src/Some/File"
+                        { path = "src/Some/File.elm"
                         , source = """module Some.File exposing (a)
 a =
     1
@@ -132,7 +132,7 @@ b =
                 Reporter.formatFixProposal file error fixedSource
                     |> expect
                         { withoutColors =
-                            """-- ELM-LINT ERROR ---------------------------------------------------- Some.File
+                            """-- ELM-LINT ERROR -------------------------------------------- src/Some/File.elm
 
 SomeRuleName: Some message
 
@@ -153,7 +153,7 @@ I think I can fix this. Here is my proposal:
 5| b =
 """
                         , withColors =
-                            """[-- ELM-LINT ERROR ---------------------------------------------------- Some.File](51-187-200)
+                            """[-- ELM-LINT ERROR -------------------------------------------- src/Some/File.elm](51-187-200)
 
 [SomeRuleName](255-0-0): Some message
 
