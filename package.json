@@ -4,7 +4,7 @@
   "description": "Reporter for elm-init",
   "main": "index.js",
   "scripts": {
-    "test": "elm make && elm-format src/ --validate && elm-test && elm-lint src/ lint/ && elm-xref"
+    "test": "elm make && elm-format src/ --validate && elm-test && elm-lint src/ tests/ lint/ && elm-xref"
   },
   "repository": {
     "type": "git",

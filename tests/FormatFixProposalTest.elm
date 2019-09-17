@@ -1,6 +1,5 @@
 module FormatFixProposalTest exposing (suite)
 
-import Expect exposing (Expectation)
 import FormatTester exposing (expect)
 import Reporter exposing (Error, File)
 import Test exposing (Test, describe, test)

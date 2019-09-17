@@ -1,6 +1,6 @@
 module ReporterTest exposing (suite)
 
-import Expect exposing (Expectation)
+import Expect
 import FormatTester exposing (expect)
 import Reporter exposing (Error, File)
 import Test exposing (Test, describe, test)
