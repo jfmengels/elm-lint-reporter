@@ -1,3 +1,8 @@
+# DEPRECATION NOTICE
+
+`elm-lint` has been deprecated in favor of [`elm-review`](https://package.elm-lang.org/packages/jfmengels/elm-review/latest/).
+To work with `elm-review`, this package has been republished under the name [`elm-review-reporter`](https://package.elm-lang.org/packages/jfmengels/elm-review-reporter/latest/).
+
 # elm-lint-reporter
 
 ![](https://travis-ci.com/jfmengels/elm-lint-reporter.svg?branch=master)
